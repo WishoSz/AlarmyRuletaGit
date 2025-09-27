@@ -1,0 +1,158 @@
+:root{--carousel-width:min(90vw,480px);--carousel-height:220px;}
+body{
+  font-family:Inter,system-ui,Segoe UI,Roboto,Arial;
+  margin:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  padding:18px;
+  background: linear-gradient(#0a0a20,#000033);
+  color:white;
+  overflow-x:hidden;
+  position:relative;
+}
+
+h1{
+  font-size:2rem;
+  color:#ff3b30;
+  margin:0;
+  text-align:center;
+  text-shadow:2px 2px 6px rgba(0,0,0,0.8);
+}
+
+#carouselWrap{
+  width:var(--carousel-width);
+  height:var(--carousel-height);
+  overflow:hidden;
+  border-radius:12px;
+  background:rgba(0,0,50,0.5);
+  box-shadow:0 6px 20px rgba(10,10,30,0.12);
+  position:relative;
+}
+
+#carouselItems{
+  display:flex;
+  height:100%;
+  align-items:center;
+}
+
+.carouselItem{
+  min-width:160px;
+  margin:0 8px;
+  text-align:center;
+  transition: transform 0.3s;
+}
+
+.carouselItem img{
+  width:120px;
+  height:120px;
+  object-fit:cover;
+  border-radius:12px;
+  display:block;
+  margin:0 auto 6px;
+}
+
+.carouselItem .label{
+  font-weight:700;
+  font-size:0.85rem;
+}
+
+.carouselItem .artist{
+  font-weight:400;
+  font-size:0.75rem;
+  color:#ccc;
+}
+
+#spinBtn{
+  padding:12px 18px;
+  border-radius:999px;
+  border:0;
+  background:#0b84ff;
+  color:white;
+  font-weight:600;
+  font-size:1rem;
+  cursor:pointer;
+  margin-top:12px;
+}
+
+#categoriaSelect{
+  margin:12px 0;
+  padding:6px 8px;
+  border-radius:6px;
+  border:1px solid #ccc;
+  min-width:150px;
+}
+
+#status{
+  font-size:.95rem;
+  color:#ccc;
+  margin-top:8px;
+  text-align:center;
+}
+
+#modal{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.8);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s;
+}
+
+#modal.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+#modalContent{
+  background:#111;
+  padding:20px 30px;
+  border-radius:12px;
+  text-align:center;
+}
+
+#modalLabel{
+  font-size:1.2rem;
+  margin-bottom:12px;
+}
+
+#openLinkBtn{
+  padding:10px 18px;
+  font-size:1rem;
+  border-radius:999px;
+  border:none;
+  background:#e74c3c;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* Estrellas y cometas */
+.star{
+  position:fixed;
+  background:white;
+  border-radius:50%;
+  animation:starAnim linear infinite;
+}
+
+@keyframes starAnim{
+  0%{transform:translateY(0);}
+  100%{transform:translateY(100vh);}
+}
+
+.comet{
+  position:fixed;
+  background:yellow;
+  height:2px;
+  animation:cometAnim linear infinite;
+}
+
+@keyframes cometAnim{
+  0%{transform:translateX(-10vw);}
+  100%{transform:translateX(110vw);}
+}
