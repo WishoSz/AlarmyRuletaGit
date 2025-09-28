@@ -186,6 +186,7 @@ async function tryLoad(){
         updateCategoriaSelect();
         status.textContent=`Lista cargada — ${items.length} items`;
         renderCarousel(items);
+        currentIndex = Math.floor(Math.random() * items.length);
         return;
       }
     }catch(err){ console.warn('No se pudo cargar JSON desde',u,err.message); }
@@ -246,7 +247,7 @@ function renderCarousel(list){
     div.className='carouselItem';
     const idx = (currentIndex + i + total) % total;
     const it = list[idx];
-    div.innerHTML=`<img src="${escapeAttr(it.img)}" alt="${escapeAttr(it.label)}" onerror="this.src='images/Default.jpg'"/>
+    div.innerHTML=`<img src="${escapeAttr(it.img)}" alt="${escapeAttr(it.label)}" onerror="this.src='images/NotFound.jpg'"/>
                      <div class="label">${escapeHtml(it.label)}</div>
                      <div class="artist">${escapeHtml(it.artist)}</div>`;
     carouselItems.appendChild(div);
@@ -300,7 +301,8 @@ function spinCarousel(){
 // ---------------- Modal ----------------
 function showModal(item){
   modalLabel.textContent=item.label;
-  modalImg.src=item.img;
+  modalImg.onerror = () => { modalImg.src = 'images/NotFound.jpg'; };
+modalImg.src = item.img;
   modal.classList.add('active');
 
   // small burst when modal opens
