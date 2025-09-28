@@ -4,6 +4,12 @@
   --carousel-height: 220px;
 }
 
+/*------Transicion del body*/
+
+body {
+  transition: background 1.8s ease-in-out;
+}
+
 html, body {
   height: 100%;
   margin: 0;

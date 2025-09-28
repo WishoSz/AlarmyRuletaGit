@@ -34,10 +34,9 @@ const bgStarsContainer = document.createElement('div');
 bgStarsContainer.id = 'backgroundStars';
 document.body.appendChild(bgStarsContainer);
 
-// Comet rain controls
 let cometSpawnInterval = null;
 const activeComets = new Set();
-const MAX_ACTIVE_COMETS = 20;      // Máximo cometas simultáneos (ajustable)
+const MAX_ACTIVE_COMETS = 20;      // Máximo cometas simultáneos
 const COMET_SPAWN_MS = 350;        // Frecuencia de spawn (ms)
 const STAR_COUNT = 200;            // Cantidad de estrellas por defecto
 
@@ -46,114 +45,108 @@ function createBackgroundStars(count = STAR_COUNT){
   for(let i = 0; i < count; i++){
     const s = document.createElement('div');
     s.className = 'star';
+    // tamaño y posición
     const size = (Math.random()*2) + 0.8; // 0.8 - 2.8px
     s.style.width = s.style.height = size + 'px';
     s.style.left = (Math.random() * 100) + '%';
     s.style.top = (Math.random() * 100) + '%';
-    const dur = 10 + Math.random() * 10; // 10 - 20s
+    // duración entre 10s y 20s (más variación para que no sincronice)
+    const dur = 10 + Math.random() * 10;
     s.style.animation = `floatStars ${dur.toFixed(2)}s ease-in-out ${Math.random()*-dur}s infinite`;
+    // opacidad aleatoria sutil
     s.style.opacity = (0.6 + Math.random()*0.45).toFixed(2);
     bgStarsContainer.appendChild(s);
   }
 }
 
-// ---------------- Spawn continuo de cometas (con cabeza y cola bien orientadas) ----------------
+// ---------------- Spawn continuo de cometas ----------------
 function spawnComet() {
   if(activeComets.size >= MAX_ACTIVE_COMETS) return;
 
   const c = document.createElement('div');
   c.className = 'comet';
 
-  // decide origen (top, right, bottom, left)
-  const edge = Math.floor(Math.random() * 4);
+  // decide origen (top, bottom, left, right) aleatorio
+  const edge = Math.floor(Math.random() * 4); // 0=top,1=right,2=bottom,3=left
   const vw = innerWidth;
   const vh = innerHeight;
 
   let startX, startY, endX, endY;
-  const travelMs = 700 + Math.random() * 1300; // 700 - 2000 ms
-  const tailLength = 80 + Math.random() * 160; // px
+  const spread = 1.3; // cuánto beyond viewport terminar
 
-  if (edge === 0) { // top -> down-ish
+  // velocidad y length
+  const travelMs = 700 + Math.random() * 1300; // 700 - 2000 ms
+  const tailLength = 80 + Math.random() * 160; // px (visual width)
+
+  if(edge === 0) { // top -> random angle downwards
     startX = Math.random() * vw;
     startY = -20;
-    endX = Math.random() * vw + (Math.random() * 200 - 100);
+    endX = Math.random() * vw + (Math.random()*200 - 100);
     endY = vh * (0.6 + Math.random() * 0.6);
-  } else if (edge === 1) { // right -> leftish
+  } else if(edge === 1) { // right -> leftish
     startX = vw + 20;
     startY = Math.random() * vh;
-    endX = - (Math.random() * vw * 0.2 + 60);
-    endY = Math.random() * vh + (Math.random() * 200 - 100);
-  } else if (edge === 2) { // bottom -> up-ish
+    endX = -vw * (Math.random()*0.3 + 0.1);
+    endY = Math.random()*vh + (Math.random()*200 - 100);
+  } else if(edge === 2) { // bottom -> upwards
     startX = Math.random() * vw;
     startY = vh + 20;
-    endX = Math.random() * vw + (Math.random() * 200 - 100);
-    endY = - (Math.random() * vh * 0.2 + 60);
+    endX = Math.random() * vw + (Math.random()*200 - 100);
+    endY = -vh * (Math.random()*0.3 + 0.1);
   } else { // left -> rightish
     startX = -20;
     startY = Math.random() * vh;
-    endX = vw + (Math.random() * vw * 0.2 + 100);
-    endY = Math.random() * vh + (Math.random() * 200 - 100);
+    endX = vw + (Math.random()*vw*0.2 + 100);
+    endY = Math.random()*vh + (Math.random()*200 - 100);
   }
 
-  // posicion inicial (head estará en el extremo izquierdo del contenedor)
   c.style.left = startX + 'px';
   c.style.top = startY + 'px';
 
-  // tamaño y estilo del "cuerpo" (cola)
+  // estilo aleatorio
+  const thickness = 1 + Math.random()*2.5;
   c.style.width = tailLength + 'px';
-  const thickness = 1 + Math.random() * 2.5;
   c.style.height = thickness + 'px';
-  c.style.opacity = 0.9 - Math.random() * 0.5;
+  c.style.opacity = 0.95 - Math.random()*0.4;
 
-  // origen en el borde izquierdo para que la cabeza quede adelante
-  c.style.transformOrigin = '0 50%';
-
-  // crear cabeza como hijo
-  const head = document.createElement('div');
-  head.className = 'cometHead';
-  const headSize = Math.max(4, thickness * 5);
-  head.style.width = head.style.height = headSize + 'px';
-  head.style.left = '0px';
-  head.style.top = '50%';
-  head.style.transform = 'translateY(-50%)';
-  c.appendChild(head);
-
-  // calcular ángulo y rotar el contenedor
+  // transform to end position using translate
+  // compute delta
   const dx = endX - startX;
   const dy = endY - startY;
   const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-  c.style.transform = `rotate(${angle}deg)`;
-
-  // transiciones para posición y opacidad
-  c.style.transition = `left ${travelMs}ms linear, top ${travelMs}ms linear, opacity ${travelMs}ms linear`;
+  c.style.transform = `rotate(${angle}deg)`; // align
+  c.style.transition = `transform ${travelMs}ms linear, opacity ${travelMs}ms linear, left ${travelMs}ms linear, top ${travelMs}ms linear`;
 
   document.body.appendChild(c);
   activeComets.add(c);
 
-  // animar a la posición final
+  // animate: use requestAnimationFrame to set end position
   requestAnimationFrame(() => {
     c.style.left = endX + 'px';
     c.style.top = endY + 'px';
     c.style.opacity = 0;
   });
 
-  // limpiar al terminar
+  // cleanup
   setTimeout(() => {
-    if (c && c.parentNode) c.remove();
+    if(c && c.parentNode) c.remove();
     activeComets.delete(c);
-  }, travelMs + 220);
+  }, travelMs + 200);
 }
 
 function startCometRain() {
-  if (cometSpawnInterval) return;
+  if(cometSpawnInterval) return;
   cometSpawnInterval = setInterval(() => {
-    const perTick = 1 + Math.floor(Math.random() * 2); // 1-2 per tick
-    for (let i = 0; i < perTick; i++) spawnComet();
+    // spawn multiple randomly to create density
+    const perTick = 1 + Math.floor(Math.random()*2); // 1-2 per tick
+    for(let i=0;i<perTick;i++){
+      spawnComet();
+    }
   }, COMET_SPAWN_MS);
 }
 
-function stopCometRain() {
-  if (cometSpawnInterval) {
+function stopCometRain(){
+  if(cometSpawnInterval) {
     clearInterval(cometSpawnInterval);
     cometSpawnInterval = null;
   }
@@ -204,26 +197,22 @@ function updateCategoriaSelect(){
   categoriaSelect.innerHTML=opts.join('');
 
   // Llenar el custom dropdown
-  if (customOptions) {
-    customOptions.innerHTML='';
-    [...categoriaSelect.options].forEach(opt=>{
-      const div = document.createElement('div');
-      div.className = 'customOption';
-      div.textContent = opt.textContent;
-      div.dataset.value = opt.value;
-      div.onclick = () => {
-        if (selectedOption) selectedOption.textContent = div.textContent;
-        categoriaSelect.value = div.dataset.value;
-        renderCarousel(getFilteredItems());
-        customOptions.classList.add('optionsHidden');
-        if (customSelect) {
-          customSelect.classList.remove('selectOpen');
-          customSelect.classList.add('selectClosed');
-        }
-      };
-      customOptions.appendChild(div);
-    });
-  }
+  customOptions.innerHTML='';
+  [...categoriaSelect.options].forEach(opt=>{
+    const div = document.createElement('div');
+    div.className = 'customOption';
+    div.textContent = opt.textContent;
+    div.dataset.value = opt.value;
+    div.onclick = () => {
+      selectedOption.textContent = div.textContent;
+      categoriaSelect.value = div.dataset.value;
+      renderCarousel(getFilteredItems());
+      customOptions.classList.add('optionsHidden');
+      customSelect.classList.remove('selectOpen');
+      customSelect.classList.add('selectClosed');
+    };
+    customOptions.appendChild(div);
+  });
 }
 
 function getFilteredItems(){
@@ -303,8 +292,8 @@ function showModal(item){
   modalImg.src=item.img;
   modal.classList.add('active');
 
-  // small burst when modal opens (use comet-shaped elements)
-  createCometBurst(8);
+  // small burst when modal opens
+  createComets(8);
   if(window.audioPlayVictory) window.audioPlayVictory();
 
   // Limpiar timeout e interval previos
@@ -345,58 +334,23 @@ function showModal(item){
   };
 }
 
-// ---------------- burst de cometas para modal (usa misma idea: contenedor + head) ----------------
-function createCometBurst(count){
+// ---------------- Cometas (burst used for modal + kept for compatibility) ----------------
+function createComets(count){
   for(let i=0;i<count;i++){
-    // crear contenedor igual que spawnComet pero con tiempos más cortos y posiciones centradas
-    const c = document.createElement('div');
-    c.className = 'comet';
-    const vw = innerWidth, vh = innerHeight;
-    // origen aleatorio cercano al centro
-    const startX = vw * (0.45 + Math.random()*0.1);
-    const startY = vh * (0.35 + Math.random()*0.3);
-
-    // dirección aleatoria
-    const angleRad = (Math.random() * Math.PI * 2);
-    const distance = 200 + Math.random()*400;
-    const endX = startX + Math.cos(angleRad) * distance;
-    const endY = startY + Math.sin(angleRad) * distance;
-
-    const travelMs = 600 + Math.random()*700;
-    const tailLength = 60 + Math.random()*120;
-    const thickness = 1 + Math.random()*3;
-
-    c.style.left = startX + 'px';
-    c.style.top = startY + 'px';
-    c.style.width = tailLength + 'px';
-    c.style.height = thickness + 'px';
-    c.style.opacity = 0.95;
-
-    c.style.transformOrigin = '0 50%';
-
-    const head = document.createElement('div');
-    head.className = 'cometHead';
-    const headSize = Math.max(5, thickness * 5);
-    head.style.width = head.style.height = headSize + 'px';
-    head.style.left = '0px';
-    head.style.top = '50%';
-    head.style.transform = 'translateY(-50%)';
-    c.appendChild(head);
-
-    const dx = endX - startX;
-    const dy = endY - startY;
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-    c.style.transform = `rotate(${angle}deg)`;
-    c.style.transition = `left ${travelMs}ms cubic-bezier(.2,.9,.2,1), top ${travelMs}ms cubic-bezier(.2,.9,.2,1), opacity ${travelMs}ms linear`;
-
+    const c=document.createElement('div');
+    c.className='comet';
+    c.style.left=(-10+Math.random()*20)+'vw';
+    c.style.top=(5+Math.random()*50)+'vh';
+    c.style.width=(30 + Math.random()*120)+'px';
+    c.style.height=(1 + Math.random()*3)+'px';
+    c.style.opacity=0.95;
+    c.style.transition='transform 900ms linear, opacity 900ms';
     document.body.appendChild(c);
-    // animate
-    requestAnimationFrame(()=> {
-      c.style.left = endX + 'px';
-      c.style.top = endY + 'px';
-      c.style.opacity = 0;
+    requestAnimationFrame(()=>{
+      c.style.transform=`translateX(${110+Math.random()*20}vw) translateY(${20+Math.random()*80}vh) rotate(${Math.random()*360}deg)`;
+      c.style.opacity=0;
     });
-    setTimeout(()=>{ if(c && c.parentNode) c.remove(); }, travelMs + 220);
+    setTimeout(()=>c.remove(),1000 + Math.random()*800);
   }
 }
 
@@ -407,14 +361,12 @@ function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
 // ---------------- Eventos ----------------
 spinBtn.addEventListener('click',spinCarousel);
 
-// Abrir/cerrar custom dropdown (si existe)
-if(customSelect){
-  customSelect.addEventListener('click',()=>{
-    if(customOptions) customOptions.classList.toggle('optionsHidden');
-    customSelect.classList.toggle('selectOpen');
-    customSelect.classList.toggle('selectClosed');
-  });
-}
+// Abrir/cerrar custom dropdown
+customSelect.addEventListener('click',()=>{
+  customOptions.classList.toggle('optionsHidden');
+  customSelect.classList.toggle('selectOpen');
+  customSelect.classList.toggle('selectClosed');
+});
 
 // ---------------- Inicial ----------------
 createBackgroundStars(STAR_COUNT);
