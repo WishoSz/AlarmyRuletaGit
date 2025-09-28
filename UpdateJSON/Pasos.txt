@@ -1,7 +1,0 @@
-1. Meterse Exportify en un navegador. 
-2. Iniciar sesión.
-3. Descargar la playlist que deseamos.
-4. Meter ese archivo .csv en esta carpeta (donde esta el .py que generara el archivo)
-5. Ejecutar el csv_to_json.py en la consola ($python csv_to_json.py)
-6. Commitear en GitHub.
-7. Listo.
