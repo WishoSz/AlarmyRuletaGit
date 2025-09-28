@@ -7,7 +7,7 @@
 /*------Transicion del body*/
 
 body {
-  transition: background 1.8s ease-in-out;
+  transition: background 1s ease-in-out;
 }
 
 html, body {
@@ -24,11 +24,32 @@ html, body {
   overflow-x: hidden;
   position: relative;
 }
+/* Título 
 
-/* Título */
 h1 {
-  font-size: 1.8rem;
-  color: #8605FF;
+    font-size: 1.8rem;
+    color: #8605FF;
+    margin: 0;
+    text-align: center;
+    text-shadow: 0 6px 24px rgba(255, 59, 48, 0.08), 0 2px 8px rgba(166, 43, 243, 0.7);
+}
+*/
+
+h1 {
+  font-family: 'Merriweather', serif; /* Cambia por la que quieras */
+  font-size: 3rem; /* Más grande que antes */
+  font-weight: 700;
+  color: #8605FF; /* Manteniendo tu morado */
+  margin: 0;
+  text-align: center;
+  text-shadow: 0 6px 24px rgba(255, 59, 48, 0.08), 0 2px 8px rgba(0,0,0,0.7);
+}
+
+h2 {
+  font-family: 'Merriweather', serif; /* Cambia por la que quieras */
+  font-size: 2rem; /* Más grande que antes */
+  font-weight: 700;
+  color: #8605FF; /* Manteniendo tu morado */
   margin: 0;
   text-align: center;
   text-shadow: 0 6px 24px rgba(255, 59, 48, 0.08), 0 2px 8px rgba(0,0,0,0.7);
@@ -144,7 +165,7 @@ h1 {
 /* Spin Button grande, redondo y rojo */
 #spinBtn {
   padding: 14px 24px;
-  border-radius:10%;
+  border-radius: 10%;
   border: 0;
   background: #8605FF;
   color: white;
@@ -153,7 +174,21 @@ h1 {
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(134, 5, 255, 0.7);
   margin-top: 20px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
+
+/* Resaltar al pasar el dedo */
+#spinBtn:hover {
+  background: #a75cff; /* un morado más brillante */
+  box-shadow: 0 8px 28px rgba(134, 5, 255, 0.85);
+}
+
+/* Agrandar ligeramente al presionar */
+#spinBtn:active {
+  transform: scale(1.08);
+  box-shadow: 0 4px 18px rgba(134, 5, 255, 0.7);
+}
+
 
 /* ---------------- STATUS ---------------- */
 #status { font-size: .9rem; color: #cfcfd6; margin-top: 6px; text-align: center; }
@@ -312,7 +347,7 @@ h1 {
   min-width: 180px;
   cursor: pointer;
   border-radius: 8px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.75);
   color: #fff;
   font-weight: 600;
   padding: 8px 12px;
@@ -347,7 +382,7 @@ h1 {
   width: 100%;
   max-height: 220px;
   overflow-y: auto;
-  background: #111;
+  background: rgba(0,0,0,0.75);
   box-shadow: 0 6px 20px rgba(0,0,0,0.6);
   border-radius: 8px;
   z-index: 120;

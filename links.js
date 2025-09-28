@@ -2,6 +2,17 @@
 const REMOTE_JSON = ''; // Pega tu enlace de Drive aquí
 const PALETTE_COLORS = ['#8e44ad','#c0392b','#2980b','#9b59b6','#e74c3c','#3498db'];
 
+//-------------- Colores de fondo ---------------
+const bodyEl = document.body;
+
+const NIGHT_BG = 'radial-gradient(ellipse at bottom, #0b1226 0%, #000012 60%), linear-gradient(#020217, #00000a)';
+const DAWN_BG = 'radial-gradient(ellipse at bottom, #ffffff 0%, #f2f2f2 60%, #e6e6e6 90%), linear-gradient(#f9f9f9, #eaeaea)';
+
+
+
+
+
+
 const q = s => document.querySelector(s);
 const carouselItems = q('#carouselItems');
 const spinBtn = q('#spinBtn');
@@ -331,8 +342,22 @@ function showModal(item){
     if(countdownInterval) clearInterval(countdownInterval);
     countdownLabel.remove();
     document.querySelectorAll('.comet').forEach(e=>e.remove());
+
+    modal.classList.remove('active');
+    setBackground(false);  // vuelve noche
+
   };
+
+    modal.classList.add('active');
+    setBackground(true);   // amanecer
 }
+
+// ----------------Funcion de cambio de fondo ----------------
+function setBackground(toDawn = true){
+  bodyEl.style.background = toDawn ? DAWN_BG : NIGHT_BG;
+}
+
+
 
 // ---------------- Cometas (burst used for modal + kept for compatibility) ----------------
 function createComets(count){
