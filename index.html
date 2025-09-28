@@ -4,374 +4,45 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Slot Machine de Canciones — Alarmy Ruleta</title>
-  <style>
-    :root{--carousel-width:min(94vw,720px);--carousel-height:220px}
-    html,body{height:100%}
-    body{
-      font-family:Inter,system-ui,Segoe UI,Roboto,Arial;
-      margin:0;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:12px;
-      padding:18px;
-      background: radial-gradient(ellipse at bottom, #0b1226 0%, #000012 60%), linear-gradient(#020217,#00000a);
-      color:#fff;
-      overflow-x:hidden;
-      position:relative;
-    }
-
-    /* Título */
-    h1{
-      font-size:1.8rem;
-      color:#ff3b30;
-      margin:0;
-      text-align:center;
-      text-shadow:0 6px 24px rgba(255,59,48,0.08), 0 2px 8px rgba(0,0,0,0.7);
-    }
-
-    /* Small helpers */
-    .muted{color:#cfcfd6;font-size:.95rem;text-align:center}
-
-    /* CAROUSEL */
-    #carouselWrap{
-      width:var(--carousel-width);
-      height:var(--carousel-height);
-      overflow:hidden;
-      border-radius:14px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-      box-shadow:0 8px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
-      position:relative;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    #carouselItems{
-      display:flex;
-      height:100%;
-      align-items:center;
-      transition: transform 0.4s cubic-bezier(.2,.8,.2,1);
-      will-change: transform;
-    }
-
-    .carouselItem{
-      min-width:160px;
-      margin:0 10px;
-      text-align:center;
-      transition: transform 0.25s, opacity 0.25s;
-      user-select:none;
-    }
-
-    .carouselItem img{
-      width:140px;
-      height:140px;
-      object-fit:cover;
-      border-radius:12px;
-      display:block;
-      margin:0 auto 6px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.6);
-      background:linear-gradient(180deg,#111,#07070a);
-    }
-
-    .carouselItem .label{
-      font-weight:700;
-      font-size:0.85rem;
-      line-height:1.1;
-      max-width:160px;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
-    }
-
-    .carouselItem .artist{
-      font-weight:400;
-      font-size:0.75rem;
-      color:#cfcfd6;
-    }
-
-    /* Centrado y zoom del item central (se aplica dinámicamente) */
-    .centered .carouselItem{ opacity:0.6; transform: scale(0.9); }
-    .centered .carouselItem.center{ opacity:1; transform: scale(1.12); }
-
-    /* UI controls */
-    #controls{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      margin-top:10px;
-      flex-wrap:wrap;
-    }
-    #categoriaSelect{
-      padding:8px 10px;border-radius:8px;border:0;background:rgba(255,255,255,0.06);color:#fff;
-      min-width:160px;
-    }
-    #spinBtn{
-      padding:10px 18px;border-radius:999px;border:0;background:#0b84ff;color:white;font-weight:700;cursor:pointer;
-      box-shadow:0 6px 18px rgba(11,132,255,0.18);
-    }
-
-    #status{font-size:.9rem;color:#cfcfd6;margin-top:6px;text-align:center}
-
-    /* Modal */
-    #modal{
-      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-      background:rgba(0,0,0,0.75);opacity:0;pointer-events:none;transition:opacity .25s;z-index:40;
-    }
-    #modal.active{opacity:1;pointer-events:auto}
-    #modalContent{
-      background:linear-gradient(180deg,#121216,#0c0c12);padding:22px 26px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.6);text-align:center;color:#fff;
-    }
-    #modalLabel{font-size:1.05rem;font-weight:800;margin-bottom:8px}
-    #openLinkBtn{padding:10px 18px;border-radius:10px;border:0;background:#ff3b30;color:#fff;font-weight:800;cursor:pointer}
-
-    /* Estrellas y cometas (simple) */
-    .star{position:fixed;background:linear-gradient(#fff,#d9e7ff);border-radius:50%;opacity:.95;pointer-events:none;z-index:30}
-    .comet{position:fixed;width:2px;height:2px;background:linear-gradient(90deg,white, rgba(255,255,255,0));opacity:0.95;pointer-events:none;z-index:29}
-
-    /* responsive */
-    @media (max-width:420px){
-      :root{--carousel-height:200px}
-      .carouselItem img{width:110px;height:110px}
-      .carouselItem{min-width:120px}
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Slot Machine de Canciones</h1>
+  <h1>Slot Machine de Canciones 2110</h1>
 
   <div id="controls">
-    <select id="categoriaSelect"><option value="Todas">Todas las categorías</option></select>
-    <button id="spinBtn">Girar</button>
+    <!-- Custom dropdown -->
+    <div id="customSelectWrapper">
+      <div id="customSelect" class="selectClosed">
+        <span id="selectedOption">Everything at once</span>
+        <div id="customOptions" class="optionsHidden"></div>
+      </div>
+    </div>
+
+    <!-- Mantener el select oculto para manejar valores -->
+    <select id="categoriaSelect" style="display:none;">
+      <option value="Todas">Everything at once</option>
+    </select>
   </div>
 
   <div id="carouselWrap">
     <div id="carouselItems" class="centered"></div>
   </div>
 
+  <button id="spinBtn">GIRAR</button>
+
   <div id="status" class="muted">Cargando lista...</div>
 
   <!-- Modal -->
   <div id="modal" aria-hidden="true">
     <div id="modalContent">
+      <img id="modalImg" src="" alt="" style="width:180px;height:180px;border-radius:12px;margin-bottom:12px;object-fit:cover"/>
       <div id="modalLabel"></div>
-      <button id="openLinkBtn">Abrir link</button>
+      <button id="closeModalBtn">&times;</button>
     </div>
   </div>
 
-  <script>
-    // --------- CONFIG: pegá tu enlace de Drive aquí (descarga directa) ----------
-    // Ejemplo final: 'https://drive.google.com/uc?export=download&id=1AbCDeFG...'
-    const REMOTE_JSON = ''; // <-- Pega tu enlace de Drive aquí (descarga directa)
-    // -------------------------------------------------------------------------
-
-    const PALETTE_COLORS = ['#8e44ad','#c0392b','#2980b','#9b59b6','#e74c3c','#3498db']; // no crítico aquí
-
-    const q = s => document.querySelector(s);
-    const carouselItems = q('#carouselItems');
-    const spinBtn = q('#spinBtn');
-    const status = q('#status');
-    const categoriaSelect = q('#categoriaSelect');
-    const modal = q('#modal');
-    const modalLabel = q('#modalLabel');
-    const openLinkBtn = q('#openLinkBtn');
-
-    let items = [];
-    let spinning = false;
-
-    // Carga JSON con bust de cache y CORS
-    async function tryLoad(){
-      status.textContent = 'Cargando lista desde JSON...';
-      const urlsToTry = [];
-      if(REMOTE_JSON) urlsToTry.push(REMOTE_JSON);
-      // fallback local (por si subiste el JSON junto al site)
-      urlsToTry.push('links.json');
-
-      for(const u of urlsToTry){
-        try{
-          const stamped = u + (u.includes('?') ? '&' : '?') + 't=' + Date.now();
-          const res = await fetch(stamped, { cache: 'no-store', mode: 'cors' });
-          if(!res.ok) throw new Error('HTTP '+res.status);
-          const parsed = await res.json();
-          if(Array.isArray(parsed) && parsed.length > 0){
-            items = parsed.map(it => ({
-              label: String(it.label || it.name || '').trim() || 'Sin nombre',
-              artist: String(it.artist || '').trim(),
-              url: String(it.url || it.link || '').trim(),
-              img: String(it.img || '').trim(),
-              categorias: Array.isArray(it.categorias) ? it.categorias.map(c => String(c)) : []
-            })).filter(it => it.url);
-            updateCategoriaSelect();
-            status.textContent = `Lista cargada — ${items.length} items`;
-            renderCarousel(items);
-            return;
-          }
-        }catch(err){
-          console.warn('No se pudo cargar JSON desde', u, err.message);
-        }
-      }
-
-      // fallback: vacío o ejemplo
-      items = [];
-      updateCategoriaSelect();
-      status.textContent = 'No se encontró links.json; lista vacía.';
-      renderCarousel(items);
-    }
-
-    // Rellenar select de categorías
-    function updateCategoriaSelect(){
-      const categoriasUnicas = new Set();
-      items.forEach(it => {
-        if(Array.isArray(it.categorias)) it.categorias.forEach(c => categoriasUnicas.add(c));
-      });
-      const opts = ['<option value="Todas">Todas las categorías</option>'];
-      Array.from(categoriasUnicas).sort().forEach(cat => opts.push(`<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`));
-      categoriaSelect.innerHTML = opts.join('');
-    }
-
-    // Render del carrusel (simple: todos los items en fila)
-    function renderCarousel(list){
-      carouselItems.innerHTML = '';
-      if(!list || list.length === 0){
-        const placeholder = document.createElement('div');
-        placeholder.className = 'carouselItem';
-        placeholder.innerHTML = `<div class="label">No hay items</div>`;
-        carouselItems.appendChild(placeholder);
-        return;
-      }
-      list.forEach((it, idx) => {
-        const div = document.createElement('div');
-        div.className = 'carouselItem';
-        const imgSrc = it.img && it.img.length>0 ? it.img : 'images/Disco.jpg';
-        // Si la ruta es relativa (no empieza por http), la dejamos tal cual (asume que la imagen está en el site)
-        const safeImg = (imgSrc.startsWith('http://') || imgSrc.startsWith('https://')) ? imgSrc : imgSrc;
-        div.innerHTML = `<img src="${escapeAttr(safeImg)}" alt="${escapeAttr(it.label)}" onerror="this.src='images/Disco.jpg'"/><div class="label">${escapeHtml(it.label)}</div><div class="artist">${escapeHtml(it.artist)}</div>`;
-        carouselItems.appendChild(div);
-      });
-      // marcar el centro visual
-      applyCentering();
-    }
-
-    // Aplica clases para destacar el elemento central en pantalla
-    function applyCentering(){
-      // simple: calculemos el centro visual y marquemos el item más cercano
-      const children = Array.from(carouselItems.children);
-      if(children.length === 0) return;
-      children.forEach(ch => ch.classList.remove('center'));
-      // por simplicidad, elegir el 3er elemento si hay muchos, o el medio
-      const middleIndex = Math.floor(children.length / 2);
-      // marcar el centro lógico
-      const centerIdx = middleIndex;
-      if(children[centerIdx]) children[centerIdx].classList.add('center');
-      // container class for small zoom
-      carouselItems.classList.add('centered');
-    }
-
-    // Giro estilo "case opening": desplazamos primeros elementos al final varias veces
-    function spinCarousel(){
-      if(spinning) return;
-      spinning = true;
-      const sel = categoriaSelect.value;
-      const filtered = sel === 'Todas' ? items : items.filter(it => Array.isArray(it.categorias) && it.categorias.includes(sel));
-      if(!filtered || filtered.length === 0){ alert('No hay links en esta categoría'); spinning=false; return; }
-
-      // Para efecto: clonamos la vista actual a un array temporal que veremos rotando
-      // haremos N movimientos rápidos y luego desaceleramos
-      const totalSteps = 30 + Math.floor(Math.random() * 25);
-      let step = 0;
-      const minDelay = 45;
-      const maxDelay = 200;
-      let delay = minDelay;
-
-      const interval = setInterval(() => {
-        // rotar visual simple: tomar primer child y mover al final
-        if(carouselItems.children.length > 0){
-          const first = carouselItems.children[0];
-          carouselItems.appendChild(first);
-          applyCentering();
-        }
-        step++;
-        // aumentar delay (desacelerar)
-        if(step > totalSteps * 0.6) delay = Math.min(maxDelay, delay + 8);
-      }, delay);
-
-      // Mejor control con timeout encadenados para desacelerar realmente
-      // usaremos una secuencia temporal alternativa para terminar bien
-      setTimeout(() => {
-        clearInterval(interval);
-        // Una vez detenido, elegimos el ganador aleatorio entre filtered
-        const chosen = filtered[Math.floor(Math.random() * filtered.length)];
-        spinning = false;
-        // mostrar modal y animaciones
-        modalLabel.textContent = chosen.label;
-        modal.classList.add('active');
-        createStars(30);
-        createComets(3);
-
-        openLinkBtn.onclick = () => {
-          modal.classList.remove('active');
-          try { window.open(chosen.url, '_blank'); } catch (e) { location.href = chosen.url; }
-          document.querySelectorAll('.star, .comet').forEach(e => e.remove());
-        };
-      }, (totalSteps * delay) + 400);
-    }
-
-    // Estrellas y cometas
-    function createStars(count){
-      for(let i=0;i<count;i++){
-        const s = document.createElement('div');
-        s.className = 'star';
-        const size = (Math.random()*2)+1;
-        s.style.width = s.style.height = size + 'px';
-        s.style.left = (Math.random()*100) + 'vw';
-        s.style.top = (-10 + Math.random()*40) + 'vh';
-        s.style.opacity = 0.9;
-        const fallDuration = 1500 + Math.random()*2200;
-        s.style.transition = `transform ${fallDuration}ms linear, opacity ${fallDuration}ms`;
-        document.body.appendChild(s);
-        // animate down
-        requestAnimationFrame(() => {
-          s.style.transform = `translateY(${120 + Math.random()*40}vh)`;
-          s.style.opacity = 0;
-        });
-        setTimeout(()=> s.remove(), fallDuration+600);
-      }
-    }
-
-    function createComets(count){
-      for(let i=0;i<count;i++){
-        const c = document.createElement('div');
-        c.className = 'comet';
-        c.style.left = (-10 + Math.random()*20) + 'vw';
-        c.style.top = (5 + Math.random()*50) + 'vh';
-        c.style.width = (20 + Math.random()*80) + 'px';
-        c.style.height = '2px';
-        c.style.opacity = 0.95;
-        c.style.transition = `transform 1300ms linear, opacity 1300ms`;
-        document.body.appendChild(c);
-        requestAnimationFrame(()=> {
-          c.style.transform = `translateX(${110 + Math.random()*20}vw) translateY(${20 + Math.random()*80}vh)`;
-          c.style.opacity = 0;
-        });
-        setTimeout(()=> c.remove(), 1500);
-      }
-    }
-
-    // Helpers de seguridad para insertar texto/atributos
-    function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
-    function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
-
-    // Eventos
-    spinBtn.addEventListener('click', spinCarousel);
-    categoriaSelect.addEventListener('change', () => {
-      // re-render to show filtered items
-      const sel = categoriaSelect.value;
-      const filtered = sel === 'Todas' ? items : items.filter(it => Array.isArray(it.categorias) && it.categorias.includes(sel));
-      renderCarousel(filtered.length ? filtered : items);
-    });
-
-    // Inicial
-    tryLoad();
-  </script>
+  <script src="links.js"></script>
+  <script src="audio.js"></script>
 </body>
 </html>
+

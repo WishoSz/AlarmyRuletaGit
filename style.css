@@ -1,0 +1,383 @@
+/* ---------------- GLOBAL ---------------- */
+:root {
+  --carousel-width: min(94vw, 720px);
+  --carousel-height: 220px;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+  background: radial-gradient(ellipse at bottom, #0b1226 0%, #000012 60%), linear-gradient(#020217, #00000a);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Título */
+h1 {
+  font-size: 1.8rem;
+  color: #8605FF;
+  margin: 0;
+  text-align: center;
+  text-shadow: 0 6px 24px rgba(255, 59, 48, 0.08), 0 2px 8px rgba(0,0,0,0.7);
+}
+
+/* Small helpers */
+.muted { color: #cfcfd6; font-size: .95rem; text-align: center; }
+
+/* ---------------- CAROUSEL ---------------- */
+#carouselWrap {
+  width: var(--carousel-width);
+  height: var(--carousel-height);
+  overflow: hidden;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 20;
+}
+
+#carouselItems {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  transition: transform 0.3s cubic-bezier(.2,.8,.2,1);
+  will-change: transform;
+  justify-content: center;
+}
+
+.carouselItem {
+  min-width: 160px;
+  margin: 0 10px;
+  text-align: center;
+  transition: transform 0.25s, opacity 0.25s;
+  user-select: none;
+  position: relative;
+}
+
+.carouselItem img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto 6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  background: linear-gradient(180deg,#111,#07070a);
+}
+
+.carouselItem .label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1.1;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.carouselItem .artist {
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: #cfcfd6;
+}
+
+/* Centro destacado */
+.centered .carouselItem { opacity: 0.6; transform: scale(0.9); }
+.centered .carouselItem.center { opacity: 1; transform: scale(1.12); }
+.centered .carouselItem.center.highlight::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: calc(100% + 12px);
+  height: calc(100% + 12px);
+  border: 2px solid #8605FF;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(134, 5, 255, 0.7);
+  pointer-events: none;
+}
+
+/* ---------------- CONTROLS ---------------- */
+#controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+#categoriaSelect {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  min-width: 180px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Mejor estilo para dropdown options */
+#categoriaSelect option {
+  color: #000;
+  background: #fff;
+  font-weight: 500;
+  padding: 4px 6px;
+}
+
+/* Spin Button grande, redondo y rojo */
+#spinBtn {
+  padding: 14px 24px;
+  border-radius:10%;
+  border: 0;
+  background: #8605FF;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(134, 5, 255, 0.7);
+  margin-top: 20px;
+}
+
+/* ---------------- STATUS ---------------- */
+#status { font-size: .9rem; color: #cfcfd6; margin-top: 6px; text-align: center; }
+
+/* ---------------- MODAL ---------------- */
+#modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.75);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s;
+  z-index: 60;
+}
+
+#modal.active { 
+  opacity: 1; 
+  pointer-events: auto; 
+}
+
+#modalContent {
+  position: relative;
+  background: linear-gradient(180deg,#121216,#0c0c12);
+  padding: 24px 28px;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+  text-align: center;
+  color: #fff;
+  min-width: 220px;
+  z-index: 80;
+}
+
+#modalLabel { 
+  font-size: 1.1rem; 
+  font-weight: 800; 
+  margin-bottom: 10px; 
+}
+
+#modalImg {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  background: linear-gradient(180deg,#111,#07070a);
+}
+
+/* Botón abrir link dentro del modal */
+#openLinkBtn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 0;
+  background: #8605FF;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Botón de cerrar modal */
+#closeModalBtn {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+}
+
+#closeModalBtn:hover {
+  background: rgba(255,59,48,0.85);
+  transform: scale(1.1);
+}
+
+/* Contador de Autoplay dentro del modal */
+#countdownLabel {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ff0000d2;
+  margin-top: 8px;
+}
+
+/* ---------------- PARTICULAS (estrellas y cometas) ---------------- */
+#backgroundStars { position: fixed; inset:0; pointer-events:none; z-index:2; }
+
+/* estrella base */
+.star {
+  position: absolute;
+  background: radial-gradient(circle at 30% 30%, #fff 0%, #e6f4ff 40%, rgba(255,255,255,0.75) 60%);
+  border-radius: 50%;
+  opacity: .9;
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,0.06));
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+/* cometa: origen en el extremo derecho, gradiente con punta en la derecha */
+.comet {
+  position: fixed;
+  pointer-events: none;
+  z-index: 3;
+  filter: blur(0.6px) drop-shadow(0 2px 10px rgba(255,140,50,0.07));
+  will-change: transform, left, top, opacity;
+  /* IMPORTANTE: origen en el extremo derecho para que la cabeza quede adelante */
+  transform-origin: 100% 50%;
+  /* gradiente invertido: opaco en la derecha (head) -> transparente en la izquierda (tail) */
+  background: linear-gradient(90deg,
+     rgba(255,255,255,0) 0%,
+     rgba(255,120,40,0.6) 30%,
+     rgba(255,170,85,0.85) 55%,
+     rgba(255,220,150,0.95) 80%,
+     rgba(255,255,255,1) 100%);
+  border-radius: 50px;
+}
+
+/* cabeza frontal que siempre queda en el extremo derecho */
+.cometHead {
+  position: absolute;
+  /* poner la cabeza en el extremo derecho */
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff 0%, rgba(255,220,140,1) 30%, rgba(255,160,60,1) 60%);
+  box-shadow: 0 4px 12px rgba(255,150,60,0.35);
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* ---------------- KEYFRAMES ---------------- */
+@keyframes floatStars {
+  0% { transform: translateY(-6px) translateX(0); opacity: 0.95; }
+  50% { transform: translateY(6px) translateX(2px); opacity: 0.85; }
+  100% { transform: translateY(-6px) translateX(0); opacity: 0.95; }
+}
+
+/* ---------------- CUSTOM DROPDOWN ---------------- */
+#customSelect {
+  position: relative;
+  min-width: 180px;
+  cursor: pointer;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  font-weight: 600;
+  padding: 8px 12px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.2s, box-shadow 0.2s;
+  z-index: 25;
+}
+
+#customSelect.selectOpen {
+  background: rgba(255,255,255,0.12);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+}
+
+#customSelect::after {
+  content: '▾';
+  font-size: 0.8rem;
+  margin-left: 6px;
+  transition: transform 0.3s;
+}
+
+#customSelect.selectOpen::after {
+  transform: rotate(180deg);
+}
+
+#customOptions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #111;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  border-radius: 8px;
+  z-index: 120;
+  transition: opacity 0.25s;
+  padding: 6px 0;
+}
+
+#customOptions.optionsHidden {
+  display: none;
+}
+
+.customOption {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #fff;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.customOption:hover {
+  background: rgba(255, 255, 255, 0.88);
+  color: #290848;
+}
+
+/* Scrollbar estilizado */
+#customOptions::-webkit-scrollbar { width: 8px; }
+#customOptions::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 4px; }
+#customOptions::-webkit-scrollbar-thumb { background: rgba(248, 248, 248, 0.6); border-radius: 4px; }
+
+/* ---------------- MEDIA ---------------- */
+@media (max-width:420px){
+  #modalContent { padding: 18px 20px; min-width: 180px; }
+  #modalImg { width: 140px; height: 140px; margin-bottom: 10px; }
+  #modalLabel { font-size: 1rem; }
+  #openLinkBtn { padding: 8px 14px; font-size: 0.9rem; }
+  #closeModalBtn { width: 28px; height: 28px; font-size: 1.1rem; top:6px; right:8px; }
+  #customOptions { max-height: 180px; }
+}
