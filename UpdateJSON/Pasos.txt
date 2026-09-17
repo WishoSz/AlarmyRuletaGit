@@ -1,4 +1,4 @@
-1. Meterse Exportify en un navegador. 
+1. Meterse Exportify en un navegador (NO EN https://exportify.net, SINO QUE EN https://exportify.app). 
 2. Iniciar sesión.
 3. Descargar la playlist que deseamos.
 4. Meter ese archivo .csv en esta carpeta (donde esta el .py que generara el archivo)
