@@ -1,76 +1,85 @@
 import csv
 import json
-import os
 
-# Ruta del CSV que descargás de Exportify
+# Ruta del CSV descargado de Exportify
 csv_path = r"C:\Personal\Proyectos\AlarmyRuletaGit\UpdateJSON\r&m.csv"
 
-# Ruta de la carpeta sincronizada con Google Drive (aquí se guardará el JSON)
+# Ruta donde se guardará el JSON
 json_path = r"C:\Personal\Proyectos\AlarmyRuletaGit\links.json"
 
-# Lista de artistas que serán categorías
-artist_categories = [
-    "System Of A Down","Metallica","Megadeth","The Warning","Slipknot","BABYMETAL",
-    "John 5","Nonpoint","Arch Enemy","Måneskin","John Petrucci","Trivium",
-    "Symphony X","In Flames","Avenged Sevenfold","Disturbed","All That Remains",
-    "DragonForce","Linkin Park","Children Of Bodom","My Chemical Romance","Darkest Hour"
-]
 
-# Diccionario de imágenes por categoría
-category_images = {
-    "System Of A Down": "images/System Of A Down.jpg",
-    "Metallica": "images/Metallica.jpg",
-    "Megadeth": "images/Megadeth.jpg",
-    "The Warning": "images/The Warning.jpg",
-    "Slipknot": "images/Slipknot.jpg",
-    "BABYMETAL": "images/BABYMETAL.jpg",
-    "John 5": "images/John 5.jpg",
-    "Nonpoint": "images/Nonpoint.jpg",
-    "Arch Enemy": "images/Arch Enemy.jpg",
-    "Måneskin": "images/Måneskin.jpg",
-    "John Petrucci": "images/John Petrucci.jpg",
-    "Trivium": "images/Trivium.jpg",
-    "Symphony X": "images/Symphony X.jpg",
-    "In Flames": "images/In Flames.jpg",
-    "Avenged Sevenfold": "images/Avenged Sevenfold.jpg",
-    "Disturbed": "images/Disturbed.jpg",
-    "All That Remains": "images/All That Remains.jpg",
-    "DragonForce": "images/DragonForce.jpg",
-    "Linkin Park": "images/Linkin Park.jpg",
-    "Children Of Bodom": "images/Children Of Bodom.jpg",
-    "My Chemical Romance": "images/My Chemical Romance.jpg",
-    "Darkest Hour": "images/Darkest Hour.jpg"
+# ============================================================
+# CATEGORÍAS MANUALES
+# ============================================================
+# Agrega aquí las categorías que quieras crear.
+# Dentro de cada categoría coloca los artistas que pertenezcan a ella.
+
+categorias_manuales = {
+    "Nu Metal": [
+        "System Of A Down",
+        "Slipknot",
+        "Linkin Park"
+    ],
+
+    # Ejemplo:
+    # "Speed Metal": [
+    #     "DragonForce",
+    #     "Artista 2"
+    # ]
 }
 
-# Imagen por defecto
-default_image = "images/Default.jpg"
 
 items = []
 
+
 with open(csv_path, newline='', encoding='utf-8') as csvfile:
     reader = csv.DictReader(csvfile)
+
     for row in reader:
+        # Obtener ID de Spotify
         track_id = row["URI de la canción"].split(":")[-1]
+
+        # Crear URL de Spotify
         url = f"https://open.spotify.com/track/{track_id}"
+
+        # Nombre completo de la canción + artistas
         label = f"{row['Nombre de la canción']} - {row['Nombre(s) del artista']}"
 
-        # Categorías automáticas: cada artista es su propia categoría
+        # ----------------------------------------------------
+        # ARTISTAS
+        # ----------------------------------------------------
+        # Exportify guarda los artistas separados por comas.
+        artists = [
+            artist.strip()
+            for artist in row["Nombre(s) del artista"].split(",")
+            if artist.strip()
+        ]
+
+        # ----------------------------------------------------
+        # CATEGORÍAS
+        # ----------------------------------------------------
+        # Una canción recibe una categoría si al menos uno
+        # de sus artistas pertenece a esa categoría.
         categorias = []
-        artista = row["Nombre(s) del artista"].strip()
-        if artista in artist_categories:
-            categorias.append(artista)
-        # Si no coincide, categorias queda como [] (sin categoría)
 
-        # Asignar imagen según categoría
-        if categorias and categorias[0] in category_images:
-            img = category_images[categorias[0]]
-        else:
-            img = default_image
+        for categoria, artistas_categoria in categorias_manuales.items():
+            if any(artist in artistas_categoria for artist in artists):
+                categorias.append(categoria)
 
-        items.append({"label": label, "url": url, "categorias": categorias, "img": img})
+        # ----------------------------------------------------
+        # CREAR ELEMENTO
+        # ----------------------------------------------------
+        items.append({
+            "label": label,
+            "url": url,
+            "artist": artists,
+            "categorias": categorias
+        })
+
 
 # Guardar JSON
 with open(json_path, "w", encoding="utf-8") as f:
     json.dump(items, f, indent=2, ensure_ascii=False)
+
 
 print(f"JSON generado en {json_path} con {len(items)} canciones")
